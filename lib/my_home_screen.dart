@@ -45,11 +45,33 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                   ),
                   title: Text("${snapshot.data?[index]['title']}"),
                   subtitle: Text("${snapshot.data?[index]['note']}"),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        onPressed: () {},
+                        icon: Icon(Icons.edit),
+                      ),
+                      IconButton(
+                        onPressed: () async{
+                          int response = await sqlDb.deleteData("DELETE FROM 'notes' WHERE id = ${snapshot.data?[index]['id']} ");
+                          //debugPrint("Response $response");
+                          if(response > 0){
+                            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_)=> MyHomeScreen()));
+                          }
+                        },
+                        icon: Icon(Icons.delete),
+                      ),
+                    ],
+                  ),
                 );
               },
             );
           } else if (snapshot.data!.isEmpty) {
-            return const Center(child: FlutterLogo(size: 100,));
+            return const Center(
+                child: FlutterLogo(
+              size: 100,
+            ));
           } else {
             return Container();
           }
@@ -57,7 +79,8 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(builder: (_)=> AddNoteScreen()));
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (_) => AddNoteScreen()));
         },
         child: const Icon(Icons.add),
       ),
