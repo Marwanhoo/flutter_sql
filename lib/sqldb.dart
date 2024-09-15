@@ -23,7 +23,8 @@ class SqlDb {
     return myDb;
   }
 
-  _onUpgrade(Database db, int oldVersion, int newVersion) {
+  _onUpgrade(Database db, int oldVersion, int newVersion) async{
+    //await db.execute("ALTER TABLE notes ADD COLUMN color TEXT");
     debugPrint("=================== On Upgrade");
   }
 
@@ -31,6 +32,7 @@ class SqlDb {
     await db.execute('''
   CREATE TABLE "notes" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "title" TEXT NOT NULL,
     "note" TEXT NOT NULL
   )
   ''');
@@ -59,5 +61,12 @@ class SqlDb {
     Database? myDb = await db;
     int response = await myDb!.rawDelete(sql);
     return response;
+  }
+
+
+  destroyDatabase() async {
+    String databasePath = await getDatabasesPath();
+    String path = join(databasePath, 'marwan.db');
+    await deleteDatabase(path);
   }
 }
