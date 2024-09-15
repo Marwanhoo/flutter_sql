@@ -12,9 +12,22 @@ class MyHomeScreen extends StatefulWidget {
 class _MyHomeScreenState extends State<MyHomeScreen> {
   SqlDb sqlDb = SqlDb();
 
-  Future<List<Map>> readData() async {
+  List notes = [];
+  bool isLoading = true;
+
+  void readData() async {
     List<Map> response = await sqlDb.readData("SELECT * FROM 'notes' ");
-    return response;
+    notes.addAll(response);
+    isLoading = false;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  @override
+  void initState() {
+    readData();
+    super.initState();
   }
 
   @override
@@ -23,64 +36,47 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
       appBar: AppBar(
         title: const Text("My Home Screen"),
       ),
-      body: FutureBuilder(
-        future: readData(),
-        builder: (BuildContext context, AsyncSnapshot<List<Map>> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                "Something went wrong! ${snapshot.error} ${snapshot.hasError}",
-              ),
-            );
-          }
-          if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-            return ListView.builder(
-              itemCount: snapshot.data?.length,
+      body: isLoading == true
+          ? const Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              itemCount: notes.length,
               itemBuilder: (context, index) {
                 return ListTile(
                   leading: CircleAvatar(
-                    child: Text("${snapshot.data?[index]['id']}"),
+                    child: Text("${notes[index]['id']}"),
                   ),
-                  title: Text("${snapshot.data?[index]['title']}"),
-                  subtitle: Text("${snapshot.data?[index]['note']}"),
+                  title: Text("${notes[index]['title']}"),
+                  subtitle: Text("${notes[index]['note']}"),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
                         onPressed: () {},
-                        icon: Icon(Icons.edit),
+                        icon: const Icon(Icons.edit),
                       ),
                       IconButton(
-                        onPressed: () async{
-                          int response = await sqlDb.deleteData("DELETE FROM 'notes' WHERE id = ${snapshot.data?[index]['id']} ");
+                        onPressed: () async {
+                          int response = await sqlDb.deleteData(
+                              "DELETE FROM 'notes' WHERE id = ${notes[index]['id']} ");
                           //debugPrint("Response $response");
-                          if(response > 0){
-                            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_)=> MyHomeScreen()));
+                          if (response > 0) {
+                            setState(() {
+                              notes.removeWhere((element) =>
+                                  element['id'] == notes[index]['id']);
+                            });
                           }
                         },
-                        icon: Icon(Icons.delete),
+                        icon: const Icon(Icons.delete),
                       ),
                     ],
                   ),
                 );
               },
-            );
-          } else if (snapshot.data!.isEmpty) {
-            return const Center(
-                child: FlutterLogo(
-              size: 100,
-            ));
-          } else {
-            return Container();
-          }
-        },
-      ),
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context)
-              .push(MaterialPageRoute(builder: (_) => AddNoteScreen()));
+              .push(MaterialPageRoute(builder: (_) => const AddNoteScreen()));
         },
         child: const Icon(Icons.add),
       ),
