@@ -28,14 +28,27 @@ class SqlDb {
     debugPrint("=================== On Upgrade");
   }
 
+
+
   FutureOr<void> _onCreate(Database db, int version) async {
-    await db.execute('''
+    Batch batch = db.batch();
+
+     batch.execute('''
   CREATE TABLE "notes" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "title" TEXT NOT NULL,
     "note" TEXT NOT NULL
   )
   ''');
+    batch.execute('''
+  CREATE TABLE "students" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "title" TEXT NOT NULL,
+    "note" TEXT NOT NULL
+  )
+  ''');
+
+   await batch.commit();
     debugPrint("=================== Create database and table");
   }
 
