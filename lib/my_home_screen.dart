@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_sqflite/add_note_screen.dart';
+import 'package:flutter_sqflite/edit_note_screen.dart';
 import 'package:flutter_sqflite/sqldb.dart';
 
 class MyHomeScreen extends StatefulWidget {
@@ -51,7 +52,17 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => EditNoteScreen(
+                                id: notes[index]['id'],
+                                title: notes[index]['title'],
+                                note: notes[index]['note'],
+                              ),
+                            ),
+                          );
+                        },
                         icon: const Icon(Icons.edit),
                       ),
                       IconButton(
