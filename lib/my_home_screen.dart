@@ -17,7 +17,8 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
   bool isLoading = true;
 
   void readData() async {
-    List<Map> response = await sqlDb.readData("SELECT * FROM 'notes' ");
+    //List<Map> response = await sqlDb.readData("SELECT * FROM 'notes' ");
+    List<Map> response = await sqlDb.read("notes");
     notes.addAll(response);
     isLoading = false;
     if (mounted) {
@@ -67,9 +68,10 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                       ),
                       IconButton(
                         onPressed: () async {
-                          int response = await sqlDb.deleteData(
-                              "DELETE FROM 'notes' WHERE id = ${notes[index]['id']} ");
-                          //debugPrint("Response $response");
+                          // int response = await sqlDb.deleteData(
+                          //     "DELETE FROM 'notes' WHERE id = ${notes[index]['id']} ");
+                          int response = await sqlDb.delete("notes", "id = ${notes[index]['id']}");
+                          debugPrint("Response $response");
                           if (response > 0) {
                             setState(() {
                               notes.removeWhere((element) =>

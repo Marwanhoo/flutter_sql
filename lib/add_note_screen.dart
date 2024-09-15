@@ -46,13 +46,20 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                   ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text("Please Fill Form")));
                 } else {
-                  int response = await sqlDb.insertData('''
-                  INSERT INTO notes (title , note)
-                  VALUES ( "${titleController.text}" , "${noteController.text}" )
-                  ''');
+                  // int response = await sqlDb.insertData('''
+                  // INSERT INTO notes (title , note)
+                  // VALUES ( "${titleController.text}" , "${noteController.text}" )
+                  // ''');
+                  int response = await sqlDb.insert("notes", {
+                    "title": titleController.text,
+                    "note": noteController.text,
+                  });
                   debugPrint("Response $response");
-                  if(response > 0){
-                  Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (_)=> MyHomeScreen()), (route) => false,);
+                  if (response > 0) {
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(builder: (_) => MyHomeScreen()),
+                      (route) => false,
+                    );
                   }
                 }
               },

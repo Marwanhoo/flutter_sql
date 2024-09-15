@@ -70,4 +70,31 @@ class SqlDb {
     String path = join(databasePath, 'marwan.db');
     await deleteDatabase(path);
   }
+
+
+
+  read(String table) async {
+    Database? myDb = await db;
+    List<Map> response = await myDb!.query(table);
+    return response;
+  }
+
+  insert(String table, Map<String, Object?> values) async {
+    Database? myDb = await db;
+    int response = await myDb!.insert(table,values);
+    return response;
+  }
+
+  update(String table, Map<String, Object?> values , String? myWhere) async {
+    Database? myDb = await db;
+    int response = await myDb!.update(table, values, where: myWhere);
+    return response;
+  }
+
+  delete(String table, String? myWhere) async {
+    Database? myDb = await db;
+    int response = await myDb!.delete(table , where: myWhere);
+    return response;
+  }
+
 }

@@ -62,12 +62,16 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
                   ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text("Please Fill Form")));
                 } else {
-                  int response = await sqlDb.updateData('''
-                  UPDATE notes SET 
-                  title ="${titleController.text}" , 
-                  note = "${noteController.text}"
-                  WHERE id = ${widget.id}
-                  ''');
+                  // int response = await sqlDb.updateData('''
+                  // UPDATE notes SET
+                  // title ="${titleController.text}" ,
+                  // note = "${noteController.text}"
+                  // WHERE id = ${widget.id}
+                  // ''');
+                  int response = await sqlDb.update("notes", {
+                    "title" : titleController.text ,
+                    "note" : noteController.text
+                  }, "id = ${widget.id}");
                   debugPrint("Response $response");
                   if (response > 0) {
                     Navigator.of(context).pushAndRemoveUntil(
